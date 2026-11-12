@@ -326,6 +326,10 @@ class MainFragment : BrowseSupportFragment() {
             ProgramType.F -> {
                 Request.fetchFEPG(tvViewModel)
             }
+
+            ProgramType.M3U -> {
+                // M3U 自定义源暂无官方 EPG，无需请求
+            }
         }
     }
 

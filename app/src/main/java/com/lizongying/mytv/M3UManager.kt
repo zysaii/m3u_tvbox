@@ -114,18 +114,19 @@ object M3UManager {
                     .url(targetUrl)
                     .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
                     .build()
-                val response = httpClient.newCall(request).execute()
-                if (response.isSuccessful) {
-                    val bodyString = response.body?.string() ?: ""
-                    if (bodyString.isNotBlank()) {
-                        val parsed = parseM3U(bodyString, config.name)
-                        for ((group, tvs) in parsed) {
-                            val list = allParsedGroups.getOrPut(group) { mutableListOf() }
-                            list.addAll(tvs)
+                httpClient.newCall(request).execute().use { response ->
+                    if (response.isSuccessful) {
+                        val bodyString = response.body()?.string() ?: ""
+                        if (bodyString.isNotBlank()) {
+                            val parsed = parseM3U(bodyString, config.name)
+                            for ((group, tvs) in parsed) {
+                                val list = allParsedGroups.getOrPut(group) { mutableListOf() }
+                                list.addAll(tvs)
+                            }
                         }
+                    } else {
+                        Log.w(TAG, "Failed to load ${config.name}, code: ${response.code()}")
                     }
-                } else {
-                    Log.w(TAG, "Failed to load ${config.name}, code: ${response.code}")
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Exception loading M3U ${config.name}", e)
