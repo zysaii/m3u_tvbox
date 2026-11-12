@@ -25,9 +25,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Generate Keystore for Signing
+      - name: Generate or Restore Keystore for Signing
         run: |
-          keytool -genkey -v -keystore app/debug.keystore -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
+          echo "B64_KEYSTORE=y"
+          keytool -genkeypair -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -keystore app/debug.keystore -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US" -storetype PKCS12
 
       - name: Build Release APK with Gradle
         run: ./gradlew assembleRelease -PIS_SO_BUILD=false

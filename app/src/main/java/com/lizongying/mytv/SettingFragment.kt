@@ -19,6 +19,10 @@ class SettingFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
+            val dm = resources.displayMetrics
+            val width = (340 * dm.density).toInt()
+            val height = (dm.heightPixels * 0.9).toInt()
+            setLayout(width, height)
             addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         }
