@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#FF263238">
+
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="配置 M3U 直播源"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/et_m3u_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="源名称 (例如: 咪咕源)"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#90A4AE"
+        android:background="#37474F"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/et_m3u_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="M3U 地址 (http/https)"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#90A4AE"
+        android:background="#37474F"
+        android:padding="10dp"
+        android:textSize="13sp"
+        android:singleLine="true" />
+
+</LinearLayout>
+

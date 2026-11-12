@@ -1,0 +1,212 @@
+package com.lizongying.mytv
+
+import android.app.AlertDialog
+import android.content.Context
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.BaseAdapter
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
+import com.lizongying.mytv.databinding.DialogM3uSettingBinding
+import com.lizongying.mytv.models.M3UConfig
+import kotlinx.coroutines.launch
+import java.util.UUID
+
+class M3USettingFragment : DialogFragment() {
+
+    private var _binding: DialogM3uSettingBinding? = null
+    private val binding get() = _binding!!
+
+    private val m3uList = mutableListOf<M3UConfig>()
+    private lateinit var adapter: M3UAdapter
+
+    var onM3UConfigChangedListener: (() -> Unit)? = null
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.apply {
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.75).toInt().coerceAtMost(600 * resources.displayMetrics.density.toInt()),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_TITLE, 0)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = DialogM3uSettingBinding.inflate(inflater, container, false)
+
+        m3uList.clear()
+        m3uList.addAll(M3UManager.getM3UList())
+
+        adapter = M3UAdapter(requireContext(), m3uList)
+        binding.lvM3u.adapter = adapter
+
+        binding.btnAddM3u.setOnClickListener {
+            showEditDialog(null)
+        }
+
+        binding.btnCloseM3u.setOnClickListener {
+            dismiss()
+        }
+
+        return binding.root
+    }
+
+    private fun reloadAndNotify() {
+        M3UManager.saveM3UList(m3uList)
+        adapter.notifyDataSetChanged()
+
+        // 异步下载解析启用的源并更新频道
+        binding.layoutLoading.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            try {
+                M3UManager.loadAndApplyEnabledM3U()
+                Toast.makeText(context, "M3U 频道已更新", Toast.LENGTH_SHORT).show()
+                onM3UConfigChangedListener?.invoke()
+            } catch (e: Exception) {
+                Toast.makeText(context, "更新失败: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                if (_binding != null) {
+                    binding.layoutLoading.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun showEditDialog(config: M3UConfig?) {
+        val context = requireContext()
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_m3u_edit, null)
+        val tvTitle = view.findViewById<TextView>(R.id.tv_dialog_title)
+        val etName = view.findViewById<EditText>(R.id.et_m3u_name)
+        val etUrl = view.findViewById<EditText>(R.id.et_m3u_url)
+
+        val isEdit = config != null
+        if (isEdit) {
+            tvTitle.text = "编辑 M3U 直播源"
+            etName.setText(config!!.name)
+            etUrl.setText(config.url)
+        } else {
+            tvTitle.text = "添加 M3U 直播源"
+            etName.setText("自定义源")
+            etUrl.setText(M3UManager.DEFAULT_M3U_URL)
+        }
+
+        AlertDialog.Builder(context)
+            .setView(view)
+            .setPositiveButton("保存") { dialog, _ ->
+                val name = etName.text.toString().trim()
+                val url = etUrl.text.toString().trim()
+                if (url.isEmpty()) {
+                    Toast.makeText(context, "M3U 地址不能为空", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                if (isEdit) {
+                    config!!.name = if (name.isEmpty()) "未命名" else name
+                    config.url = url
+                } else {
+                    val newConfig = M3UConfig(
+                        id = UUID.randomUUID().toString(),
+                        name = if (name.isEmpty()) "未命名" else name,
+                        url = url,
+                        enabled = true
+                    )
+                    m3uList.add(newConfig)
+                }
+                reloadAndNotify()
+                dialog.dismiss()
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private inner class M3UAdapter(
+        private val context: Context,
+        private val list: MutableList<M3UConfig>
+    ) : BaseAdapter() {
+
+        override fun getCount(): Int = list.size
+
+        override fun getItem(position: Int): M3UConfig = list[position]
+
+        override fun getItemId(position: Int): Long = position.toLong()
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+            val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_m3u, parent, false)
+            val item = getItem(position)
+
+            val cbEnable = view.findViewById<CheckBox>(R.id.cb_m3u_enable)
+            val tvName = view.findViewById<TextView>(R.id.tv_m3u_name)
+            val tvUrl = view.findViewById<TextView>(R.id.tv_m3u_url)
+            val btnEdit = view.findViewById<Button>(R.id.btn_m3u_edit)
+            val btnDelete = view.findViewById<Button>(R.id.btn_m3u_delete)
+
+            tvName.text = item.name
+            tvUrl.text = item.url
+            cbEnable.isChecked = item.enabled
+
+            if (item.isBuiltin) {
+                btnEdit.visibility = View.GONE
+                btnDelete.visibility = View.GONE
+            } else {
+                btnEdit.visibility = View.VISIBLE
+                btnDelete.visibility = View.VISIBLE
+            }
+
+            // 点击整个条目切换多选对勾状态
+            view.setOnClickListener {
+                item.enabled = !item.enabled
+                cbEnable.isChecked = item.enabled
+                reloadAndNotify()
+            }
+
+            btnEdit.setOnClickListener {
+                showEditDialog(item)
+            }
+
+            btnDelete.setOnClickListener {
+                AlertDialog.Builder(context)
+                    .setTitle("确认删除")
+                    .setMessage("确定删除直播源「${item.name}」吗？")
+                    .setPositiveButton("删除") { dialog, _ ->
+                        list.removeAt(position)
+                        reloadAndNotify()
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("取消", null)
+                    .show()
+            }
+
+            return view
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        const val TAG = "M3USettingFragment"
+    }
+}
+
