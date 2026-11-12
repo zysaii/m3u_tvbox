@@ -114,7 +114,8 @@ object M3UManager {
                     .url(targetUrl)
                     .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
                     .build()
-                httpClient.newCall(request).execute().use { response ->
+                val response = httpClient.newCall(request).execute()
+                try {
                     if (response.isSuccessful) {
                         val bodyString = response.body()?.string() ?: ""
                         if (bodyString.isNotBlank()) {
@@ -127,6 +128,8 @@ object M3UManager {
                     } else {
                         Log.w(TAG, "Failed to load ${config.name}, code: ${response.code()}")
                     }
+                } finally {
+                    response.close()
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Exception loading M3U ${config.name}", e)
