@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver
 import androidx.annotation.OptIn
 import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
@@ -18,7 +19,10 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.hls.DefaultHlsExtractorFactory
+import androidx.media3.exoplayer.hls.HlsMediaSource
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.extractor.ts.DefaultTsPayloadReaderFactory
 import androidx.media3.ui.PlayerView
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.lizongying.mytv.databinding.PlayerBinding
@@ -110,12 +114,20 @@ class PlayerFragment : Fragment(), SurfaceHolder.Callback {
     @OptIn(UnstableApi::class)
     fun play(tvViewModel: TVViewModel) {
         this.tvViewModel = tvViewModel
+        val url = tvViewModel.getVideoUrlCurrent()
+
+        // 构建 MediaItem：若未带常见后缀或包含 m3u8 特征，强制指定 MIME 为 APPLICATION_M3U8 确保 HLS 解析
+        val mediaItem = MediaItem.Builder()
+            .setUri(url)
+            .setMimeType(MimeTypes.APPLICATION_M3U8)
+            .build()
+
         playerView?.player?.run {
-            setMediaItem(MediaItem.fromUri(tvViewModel.getVideoUrlCurrent()))
+            setMediaItem(mediaItem)
             prepare()
         }
         exoPlayer?.run {
-            setMediaItem(com.google.android.exoplayer2.MediaItem.fromUri(tvViewModel.getVideoUrlCurrent()))
+            setMediaItem(com.google.android.exoplayer2.MediaItem.fromUri(url))
             prepare()
         }
     }
