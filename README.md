@@ -5,8 +5,8 @@
 ## 使用
 
 1. 下载
-    * [github](https://github.com/lizongying/my-tv/releases/)
-    * [gitee](https://gitee.com/lizongying/my-tv/releases/)
+    * [github](https://github.com/zysaii/m3u_tvbox/releases/)
+    * [gitee](https://github.com/zysaii/m3u_tvbox/releases/)
 2. 安裝
     * U盘安装
     * 小米电视可以使用小米电视助手进行安装

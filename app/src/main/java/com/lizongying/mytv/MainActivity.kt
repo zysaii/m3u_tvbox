@@ -315,6 +315,10 @@ class MainActivity : FragmentActivity(), Request.RequestListener {
         }
     }
 
+    fun reloadChannels() {
+        mainFragment.reloadRows()
+    }
+
     private val hideSetting = Runnable {
         if (settingFragment.isVisible) {
             settingFragment.dismiss()

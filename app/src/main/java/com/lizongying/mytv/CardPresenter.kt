@@ -2,9 +2,11 @@ package com.lizongying.mytv
 
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.ContextThemeWrapper
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.leanback.widget.ImageCardView
 import androidx.leanback.widget.Presenter
 import com.bumptech.glide.Glide
@@ -30,6 +32,17 @@ class CardPresenter(
         cardView.titleText = tvViewModel.getTV().title
         cardView.setMainImageDimensions(CARD_WIDTH, CARD_HEIGHT)
         cardView.tag = tvViewModel.videoUrl.value
+
+        // 动态根据 SP 保存的 channelFontSize 设置每个台的字体大小
+        val fontSize = SP.channelFontSize
+        cardView.findViewById<TextView>(androidx.leanback.R.id.title_text)?.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            fontSize
+        )
+        cardView.findViewById<TextView>(androidx.leanback.R.id.content_text)?.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            (fontSize - 3f).coerceAtLeast(10f)
+        )
 
         cardView.mainImageView?.let {
             Glide.with(viewHolder.view.context)

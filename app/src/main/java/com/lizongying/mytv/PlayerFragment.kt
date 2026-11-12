@@ -15,7 +15,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.lizongying.mytv.databinding.PlayerBinding
@@ -54,8 +57,16 @@ class PlayerFragment : Fragment(), SurfaceHolder.Callback {
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 playerView!!.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                playerView!!.player = activity?.let {
-                    ExoPlayer.Builder(it)
+                playerView!!.player = activity?.let { ctx ->
+                    val httpDataSourceFactory = DefaultHttpDataSource.Factory()
+                        .setAllowCrossProtocolRedirects(true)
+                        .setConnectTimeoutMs(15000)
+                        .setReadTimeoutMs(15000)
+                        .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                    val dataSourceFactory = DefaultDataSource.Factory(ctx, httpDataSourceFactory)
+
+                    ExoPlayer.Builder(ctx)
+                        .setMediaSourceFactory(DefaultMediaSourceFactory(dataSourceFactory))
                         .build()
                 }
                 playerView!!.player?.playWhenReady = true

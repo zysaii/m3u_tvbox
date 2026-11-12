@@ -68,4 +68,11 @@ object SP {
     var m3uListJson: String
         get() = sp.getString(KEY_M3U_LIST, "") ?: ""
         set(value) = sp.edit().putString(KEY_M3U_LIST, value).apply()
+
+    private const val KEY_CHANNEL_FONT_SIZE = "channel_font_size"
+
+    // 默认字体大小 16sp
+    var channelFontSize: Float
+        get() = sp.getFloat(KEY_CHANNEL_FONT_SIZE, 16f)
+        set(value) = sp.edit().putFloat(KEY_CHANNEL_FONT_SIZE, value).apply()
 }

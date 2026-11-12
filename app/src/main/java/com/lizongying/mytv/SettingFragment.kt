@@ -37,7 +37,7 @@ class SettingFragment : DialogFragment() {
         val context = requireContext() // It‘s safe to get context here.
         _binding = SettingBinding.inflate(inflater, container, false)
         binding.versionName.text = "当前版本: v${context.appVersionName}"
-        binding.version.text = "https://github.com/lizongying/my-tv"
+        binding.version.text = "https://github.com/zysaii/m3u_tvbox"
 
         binding.switchChannelReversal.run {
             isChecked = SP.channelReversal
@@ -77,6 +77,28 @@ class SettingFragment : DialogFragment() {
                 it.settingDelayHide()
                 it.showM3USetting()
             }
+        }
+
+        // 字体大小调节
+        fun updateFontSizeDisplay() {
+            binding.tvFontSizeVal.text = "${SP.channelFontSize.toInt()}sp"
+        }
+        updateFontSizeDisplay()
+
+        binding.btnFontDecrease.setOnClickListener {
+            val newSize = (SP.channelFontSize - 1f).coerceAtLeast(12f)
+            SP.channelFontSize = newSize
+            updateFontSizeDisplay()
+            (activity as? MainActivity)?.settingDelayHide()
+            (activity as? MainActivity)?.reloadChannels()
+        }
+
+        binding.btnFontIncrease.setOnClickListener {
+            val newSize = (SP.channelFontSize + 1f).coerceAtMost(28f)
+            SP.channelFontSize = newSize
+            updateFontSizeDisplay()
+            (activity as? MainActivity)?.settingDelayHide()
+            (activity as? MainActivity)?.reloadChannels()
         }
 
         updateManager = UpdateManager(context, this, context.appVersionCode)

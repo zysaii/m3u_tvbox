@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="当前版本: $versionName\n获取最新: https://github.com/lizongying/my-tv/releases/"
+                android:text="当前版本: $versionName\n获取最新: https://github.com/zysaii/m3u_tvbox/releases/"
                 />
             <LinearLayout
                 android:layout_width="300dp"
@@ -60,6 +60,50 @@
                 android:textColor="#FFFFFF"
                 android:text="M3U 直播源配置"
                 />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:text="频道字体大小" />
+                <Button
+                    android:id="@+id/btn_font_decrease"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:padding="0dp"
+                    android:background="#37474F"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:text="-" />
+                <TextView
+                    android:id="@+id/tv_font_size_val"
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#80D8FF"
+                    android:textSize="15sp"
+                    android:text="16sp" />
+                <Button
+                    android:id="@+id/btn_font_increase"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:padding="0dp"
+                    android:background="#37474F"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:text="+" />
+            </LinearLayout>
             <Button
                 android:id="@+id/exit"
                 android:layout_width="wrap_content"
