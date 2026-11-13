@@ -45,7 +45,7 @@ android {
         release {
             storeFile file("release.keystore")
             storePassword "android"
-            keyAlias "mytv"
+            keyAlias "androiddebugkey"
             keyPassword "android"
         }
     }
