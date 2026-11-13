@@ -155,6 +155,7 @@ class M3USettingFragment : DialogFragment() {
             val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_m3u, parent, false)
             val item = getItem(position)
 
+            val layoutToggle = view.findViewById<View>(R.id.layout_m3u_toggle)
             val cbEnable = view.findViewById<CheckBox>(R.id.cb_m3u_enable)
             val tvStatus = view.findViewById<TextView>(R.id.tv_m3u_status)
             val tvName = view.findViewById<TextView>(R.id.tv_m3u_name)
@@ -182,8 +183,8 @@ class M3USettingFragment : DialogFragment() {
                 btnDelete.visibility = View.VISIBLE
             }
 
-            // 点击整个条目切换多选对勾状态
-            view.setOnClickListener {
+            // 点击或遥控器在左侧区域按OK键切换启用状态
+            layoutToggle.setOnClickListener {
                 item.enabled = !item.enabled
                 cbEnable.isChecked = item.enabled
                 reloadAndNotify()

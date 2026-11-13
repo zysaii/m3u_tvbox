@@ -4,74 +4,90 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:padding="10dp"
-    android:background="@drawable/bg_m3u_item_selector"
+    android:padding="8dp"
     android:layout_marginBottom="6dp"
+    android:background="@drawable/bg_m3u_item_selector"
     android:descendantFocusability="afterDescendants"
-    android:focusable="true"
-    android:clickable="true">
+    android:focusable="false"
+    android:clickable="false">
 
-    <!-- 状态指示图标与复选框 -->
-    <CheckBox
-        android:id="@+id/cb_m3u_enable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:buttonTint="#00E5FF"
-        android:scaleX="1.15"
-        android:scaleY="1.15"
-        android:focusable="false"
-        android:clickable="false" />
-
-    <TextView
-        android:id="@+id/tv_m3u_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="#00E5FF"
-        android:text="[已启用]" />
-
+    <!-- 左侧可获焦区域：按OK键切换启用/停用 -->
     <LinearLayout
+        android:id="@+id/layout_m3u_toggle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="6dp"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="@drawable/bg_m3u_toggle_selector">
 
-        <TextView
-            android:id="@+id/tv_m3u_name"
+        <CheckBox
+            android:id="@+id/cb_m3u_enable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
+            android:buttonTint="#00E5FF"
+            android:scaleX="1.15"
+            android:scaleY="1.15"
+            android:focusable="false"
+            android:clickable="false" />
+
+        <TextView
+            android:id="@+id/tv_m3u_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:textSize="12sp"
             android:textStyle="bold"
-            android:text="直播源名称" />
+            android:textColor="#00E5FF"
+            android:text="[已启用]" />
 
-        <TextView
-            android:id="@+id/tv_m3u_url"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="#B0BEC5"
-            android:textSize="11sp"
-            android:singleLine="true"
-            android:ellipsize="middle"
-            android:text="https://..." />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:id="@+id/tv_m3u_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:text="直播源名称" />
+
+            <TextView
+                android:id="@+id/tv_m3u_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#B0BEC5"
+                android:textSize="11sp"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:text="https://..." />
+        </LinearLayout>
     </LinearLayout>
 
+    <!-- 右侧操作按钮：遥控器向右可获焦 -->
     <Button
         android:id="@+id/btn_m3u_edit"
         android:layout_width="wrap_content"
         android:layout_height="34dp"
         android:minHeight="0dp"
         android:minWidth="0dp"
+        android:layout_marginStart="8dp"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:text="编辑"
         android:textColor="#FFFFFF"
         android:textSize="12sp"
+        android:focusable="true"
+        android:clickable="true"
         android:background="@drawable/btn_gray_selector" />
 
     <Button
@@ -86,6 +102,8 @@
         android:text="删除"
         android:textColor="#FFFFFF"
         android:textSize="12sp"
+        android:focusable="true"
+        android:clickable="true"
         android:background="@drawable/btn_red_selector" />
 
 </LinearLayout>
