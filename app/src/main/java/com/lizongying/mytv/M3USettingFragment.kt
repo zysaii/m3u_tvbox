@@ -33,10 +33,10 @@ class M3USettingFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
-            setLayout(
-                (resources.displayMetrics.widthPixels * 0.75).toInt().coerceAtMost(600 * resources.displayMetrics.density.toInt()),
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            val dm = resources.displayMetrics
+            val dialogWidth = (dm.widthPixels * 0.85).toInt().coerceAtMost((720 * dm.density).toInt())
+            val dialogHeight = (dm.heightPixels * 0.88).toInt()
+            setLayout(dialogWidth, dialogHeight)
             addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
             decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         }
@@ -156,6 +156,7 @@ class M3USettingFragment : DialogFragment() {
             val item = getItem(position)
 
             val cbEnable = view.findViewById<CheckBox>(R.id.cb_m3u_enable)
+            val tvStatus = view.findViewById<TextView>(R.id.tv_m3u_status)
             val tvName = view.findViewById<TextView>(R.id.tv_m3u_name)
             val tvUrl = view.findViewById<TextView>(R.id.tv_m3u_url)
             val btnEdit = view.findViewById<Button>(R.id.btn_m3u_edit)
@@ -164,6 +165,14 @@ class M3USettingFragment : DialogFragment() {
             tvName.text = item.name
             tvUrl.text = item.url
             cbEnable.isChecked = item.enabled
+
+            if (item.enabled) {
+                tvStatus.text = "[已启用]"
+                tvStatus.setTextColor(android.graphics.Color.parseColor("#00E5FF"))
+            } else {
+                tvStatus.text = "[已停用]"
+                tvStatus.setTextColor(android.graphics.Color.parseColor("#78909C"))
+            }
 
             if (item.isBuiltin) {
                 btnEdit.visibility = View.GONE

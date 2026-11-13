@@ -6,11 +6,11 @@
     android:background="#AA000000">
 
     <LinearLayout
-        android:layout_width="480dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:background="#FF263238"
+        android:background="#FF21272B"
         android:padding="16dp">
 
         <TextView
@@ -25,17 +25,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="勾选复选框启用/读取该源，合并接入对应分组"
-            android:textColor="#B0BEC5"
+            android:text="遥控器按OK键可直接切换源启用状态，或使用右侧按钮编辑/删除"
+            android:textColor="#90A4AE"
             android:textSize="12sp" />
 
         <ListView
             android:id="@+id/lv_m3u"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="12dp"
             android:divider="@null"
-            android:dividerHeight="4dp" />
+            android:dividerHeight="6dp" />
 
         <LinearLayout
             android:id="@+id/layout_loading"
@@ -43,12 +44,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:visibility="gone">
 
             <ProgressBar
-                android:layout_width="24dp"
-                android:layout_height="24dp" />
+                android:layout_width="22dp"
+                android:layout_height="22dp" />
 
             <TextView
                 android:id="@+id/tv_loading_text"
@@ -63,32 +64,31 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="14dp"
             android:orientation="horizontal"
             android:gravity="end">
 
             <Button
                 android:id="@+id/btn_add_m3u"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="38dp"
                 android:text="添加新源"
                 android:textColor="#FFFFFF"
-                android:background="#009688"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp" />
+                android:background="@drawable/btn_teal_selector"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
             <Button
                 android:id="@+id/btn_close_m3u"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginStart="10dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="12dp"
                 android:text="关闭"
                 android:textColor="#FFFFFF"
-                android:background="#37474F"
-                android:paddingLeft="14dp"
-                android:paddingRight="14dp" />
+                android:background="@drawable/btn_gray_selector"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
         </LinearLayout>
     </LinearLayout>
 
 </FrameLayout>
-
