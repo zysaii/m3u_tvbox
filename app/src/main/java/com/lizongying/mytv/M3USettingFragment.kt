@@ -58,6 +58,7 @@ class M3USettingFragment : DialogFragment() {
         m3uList.addAll(M3UManager.getM3UList())
 
         adapter = M3UAdapter(requireContext(), m3uList)
+        binding.lvM3u.itemsCanFocus = true
         binding.lvM3u.adapter = adapter
 
         binding.btnAddM3u.setOnClickListener {
