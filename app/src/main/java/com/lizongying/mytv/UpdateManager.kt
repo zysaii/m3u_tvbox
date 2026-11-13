@@ -74,8 +74,10 @@ class UpdateManager(
             }
 
             if (updateAvailable) {
+                val fm = (context as? androidx.fragment.app.FragmentActivity)?.supportFragmentManager
+                    ?: settingFragment.childFragmentManager
                 val dialog = ConfirmationFragment(this@UpdateManager, dialogText)
-                dialog.show(settingFragment.parentFragmentManager, TAG)
+                dialog.show(fm, TAG)
             }
         }
     }
