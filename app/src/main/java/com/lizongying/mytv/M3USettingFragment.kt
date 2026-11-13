@@ -77,13 +77,14 @@ class M3USettingFragment : DialogFragment() {
 
         // 异步下载解析启用的源并更新频道
         binding.layoutLoading.visibility = View.VISIBLE
+        binding.tvLoadingText.text = "正在下载并解析直播源..."
         lifecycleScope.launch {
             try {
-                M3UManager.loadAndApplyEnabledM3U()
-                Toast.makeText(context, "M3U 频道已更新", Toast.LENGTH_SHORT).show()
+                val resultMsg = M3UManager.loadAndApplyEnabledM3U()
+                Toast.makeText(context, resultMsg, Toast.LENGTH_LONG).show()
                 onM3UConfigChangedListener?.invoke()
             } catch (e: Exception) {
-                Toast.makeText(context, "更新失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "更新异常: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 if (_binding != null) {
                     binding.layoutLoading.visibility = View.GONE

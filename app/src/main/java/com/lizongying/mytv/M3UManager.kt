@@ -19,7 +19,9 @@ object M3UManager {
 
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
+        .readTimeout(25, TimeUnit.SECONDS)
+        .followRedirects(true)
+        .followSslRedirects(true)
         .build()
 
     // 内存中缓存已解析成功的 m3u 频道：Map<GroupTitle, List<TV>>
@@ -98,7 +100,7 @@ object M3UManager {
     /**
      * 异步加载并合并所有勾选的 M3U 源内容，并更新 TVList
      */
-    suspend fun loadAndApplyEnabledM3U(): Boolean = withContext(Dispatchers.IO) {
+    suspend fun loadAndApplyEnabledM3U(): String = withContext(Dispatchers.IO) {
         val allConfigs = getM3UList()
         val builtinConfig = allConfigs.firstOrNull { it.id == M3UConfig.BUILTIN_ID }
         val includeBase = builtinConfig?.enabled ?: true
@@ -106,13 +108,17 @@ object M3UManager {
         val externalConfigs = allConfigs.filter { !it.isBuiltin && it.enabled && it.url.isNotBlank() }
         val allParsedGroups = mutableMapOf<String, MutableList<TV>>()
 
+        var successCount = 0
+        var totalChannels = 0
+        val errorMessages = mutableListOf<String>()
+
         for (config in externalConfigs) {
             val targetUrl = normalizeUrl(config.url)
             Log.i(TAG, "Loading M3U from ${config.name}: $targetUrl")
             try {
                 val request = Request.Builder()
                     .url(targetUrl)
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
                     .build()
                 val response = httpClient.newCall(request).execute()
                 try {
@@ -120,25 +126,48 @@ object M3UManager {
                         val bodyString = response.body()?.string() ?: ""
                         if (bodyString.isNotBlank()) {
                             val parsed = parseM3U(bodyString, config.name)
+                            var count = 0
                             for ((group, tvs) in parsed) {
                                 val list = allParsedGroups.getOrPut(group) { mutableListOf() }
                                 list.addAll(tvs)
+                                count += tvs.size
                             }
+                            if (count > 0) {
+                                successCount++
+                                totalChannels += count
+                            } else {
+                                errorMessages.add("${config.name}: 未解析出有效频道")
+                            }
+                        } else {
+                            errorMessages.add("${config.name}: 返回内容为空")
                         }
                     } else {
                         Log.w(TAG, "Failed to load ${config.name}, code: ${response.code()}")
+                        errorMessages.add("${config.name}: HTTP ${response.code()}")
                     }
                 } finally {
                     response.close()
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Exception loading M3U ${config.name}", e)
+                errorMessages.add("${config.name}: ${e.message ?: "网络超时"}")
             }
         }
 
         cachedM3UGroups = allParsedGroups
         TVList.updateM3UGroups(allParsedGroups, includeBase = includeBase)
-        return@withContext true
+
+        return@withContext if (externalConfigs.isEmpty()) {
+            "已应用内置源设置"
+        } else if (successCount > 0) {
+            if (errorMessages.isEmpty()) {
+                "成功加载 $totalChannels 个频道"
+            } else {
+                "加载了 $totalChannels 个频道（部分失败: ${errorMessages.joinToString(", ")}）"
+            }
+        } else {
+            "加载失败: ${errorMessages.joinToString(", ")}"
+        }
     }
 
     /**
