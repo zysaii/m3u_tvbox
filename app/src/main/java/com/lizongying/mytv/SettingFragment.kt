@@ -139,6 +139,7 @@ class SettingFragment : DialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        updateManager.destroy()
         _binding = null
     }
 

@@ -55,6 +55,7 @@
                     android:textSize="13sp" />
 
                 <ProgressBar
+                    android:id="@+id/check_version_loading"
                     android:visibility="gone"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
