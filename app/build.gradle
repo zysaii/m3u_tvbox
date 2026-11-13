@@ -43,9 +43,9 @@ android {
 
     signingConfigs {
         release {
-            storeFile file("debug.keystore")
+            storeFile file("release.keystore")
             storePassword "android"
-            keyAlias "androiddebugkey"
+            keyAlias "mytv"
             keyPassword "android"
         }
     }
